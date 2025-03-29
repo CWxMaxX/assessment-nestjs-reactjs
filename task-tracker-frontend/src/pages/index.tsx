@@ -32,7 +32,7 @@ export default function IndexPage() {
               radius: "full",
               variant: "shadow",
             })}
-            href={siteConfig.links.docs}
+            href={"#"}
           >
             Documentation
           </Link>
@@ -49,7 +49,7 @@ export default function IndexPage() {
         <div className="mt-8">
           <Snippet hideCopyButton hideSymbol variant="bordered">
             <span>
-              Get started by editing{" "}
+              Get started by editing
               <Code color="primary">pages/index.tsx</Code>
             </span>
           </Snippet>

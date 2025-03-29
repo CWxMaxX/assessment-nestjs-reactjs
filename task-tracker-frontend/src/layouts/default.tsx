@@ -1,15 +1,18 @@
 import { Link } from "@heroui/link";
 
 import { Navbar } from "@/components/navbar";
+import { NavbarProps } from "@/types";
 
 export default function DefaultLayout({
   children,
+  navBarProps,
 }: {
   children: React.ReactNode;
+  navBarProps?: NavbarProps | null;
 }) {
   return (
     <div className="relative flex flex-col h-screen">
-      <Navbar />
+      <Navbar userType={"admin"} />
       <main className="container mx-auto max-w-7xl px-6 flex-grow pt-16">
         {children}
       </main>
@@ -21,8 +24,7 @@ export default function DefaultLayout({
           target="_blank"
           title="profile"
         >
-          <span className="text-default-600">Chamith Wijesooriya | </span>
-          <p className="text-primary">chamithwijesooriya@gmail.com</p>
+          <span className="text-default-600">Chamith Wijesooriya</span>
         </Link>
       </footer>
     </div>

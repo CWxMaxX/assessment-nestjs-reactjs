@@ -226,3 +226,24 @@ export const GlobeIcon: React.FC<IconSvgProps> = ({
     </svg>
   );
 };
+
+export const LogoutIcon: React.FC<IconSvgProps> = ({
+  size = 24,
+  width,
+  height,
+  ...props
+}) => {
+  return (
+    <svg
+      height={size || height}
+      viewBox="0 0 24 24"
+      width={size || width}
+      {...props}
+    >
+      <path
+        d="M16 13v-2H9V8l-5 4 5 4v-3h7zm-1-11H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2v-3h-2v3H5V4h10v3h2V4c0-1.1-.9-2-2-2z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+};

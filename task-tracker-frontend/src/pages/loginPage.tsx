@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Button, Input, Checkbox, Link, Form } from "@heroui/react";
+import { Button, Input, Checkbox, Form, Image } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
 import DefaultLayout from "@/layouts/default";
@@ -19,11 +19,18 @@ export default function Component() {
   return (
     <DefaultLayout>
       <div className="flex h-full w-full items-center justify-center">
-        <div className="flex w-full max-w-sm flex-col gap-4 rounded-large px-8 pb-10 pt-6">
-          <p className="pb-4 text-left text-3xl font-semibold">
-            Log In
-            <span aria-label="emoji" className="ml-2" role="img">
-              👋
+        <div className="flex w-full max-w-sm flex-col gap-4 rounded-large px-8 pb-10 ">
+          <div className="w-full flex justify-center items-center">
+            <Image src="/assets/logo.png" width={100} />
+          </div>
+          <p className="pb-0 text-center text-2xl font-semibold">
+            Task Management System
+          </p>
+          <p className="pb-4 text-center font-thin">
+            <span className="">Welcome Back!</span>
+            <br />
+            <span className="text-xs">
+              Stay organized and get things done efficiently.
             </span>
           </p>
           <Form
@@ -68,19 +75,11 @@ export default function Component() {
               <Checkbox defaultSelected name="remember" size="sm">
                 Remember me
               </Checkbox>
-              <Link className="text-default-500" href="#" size="sm">
-                Forgot password?
-              </Link>
             </div>
             <Button className="w-full" color="primary" type="submit">
               Log In
             </Button>
           </Form>
-          <p className="text-center text-small">
-            <Link href="#" size="sm">
-              Create an account
-            </Link>
-          </p>
         </div>
       </div>
     </DefaultLayout>
