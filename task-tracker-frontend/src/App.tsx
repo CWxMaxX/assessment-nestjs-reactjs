@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 
 import TasksPage from "@/pages/tasksPage";
-import Employees from "@/pages/employees";
+import Employees from "@/pages/employeesPage";
 import Analytics from "@/pages/analytics";
 import LoginPage from "@/pages/loginPage";
 import IndexPage from "@/pages/index";

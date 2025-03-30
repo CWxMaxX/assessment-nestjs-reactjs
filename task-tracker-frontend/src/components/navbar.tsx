@@ -10,7 +10,8 @@ import {
 } from "@heroui/navbar";
 import { link as linkStyles } from "@heroui/theme";
 import clsx from "clsx";
-import { Button, Image } from "@heroui/react";
+import { Button } from "@heroui/react";
+import React from "react";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
@@ -28,20 +29,30 @@ export const Navbar = (props: NavbarProps) => {
     window.location.href = "/login";
     window.history.replaceState(null, "", "/login");
   };
+  const MemoizedNavbarBrand = React.memo(() => (
+    <NavbarBrand className="gap-3 max-w-fit">
+      <Link
+        className="flex justify-start items-center gap-1"
+        color="foreground"
+        href="/"
+      >
+        <img
+          alt="logo"
+          className="rounded-lg mr-1"
+          src="/assets/logo.png"
+          width={35}
+        />
+        <p className="font-bold text-inherit">Task Management System</p>
+      </Link>
+    </NavbarBrand>
+  ));
+
+  MemoizedNavbarBrand.displayName = "MemoizedNavbarBrand";
 
   return (
     <HeroUINavbar maxWidth="xl" position="sticky">
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
-        <NavbarBrand className="gap-3 max-w-fit">
-          <Link
-            className="flex justify-start items-center gap-1"
-            color="foreground"
-            href="/"
-          >
-            <Image alt="logo" src="/assets/logo.png" width={35} />
-            <p className="font-bold text-inherit">Task Management System</p>
-          </Link>
-        </NavbarBrand>
+        <MemoizedNavbarBrand />
         {props.userType && (
           <div className="hidden lg:flex gap-4 justify-start ml-2">
             {(props.userType === "admin"

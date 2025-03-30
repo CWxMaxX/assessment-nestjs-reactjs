@@ -24,7 +24,9 @@ export default function DefaultLayout({
           target="_blank"
           title="profile"
         >
-          <span className="text-default-600">Chamith Wijesooriya</span>
+          <span className="text-xs font-extralight opacity-45">
+            Developed by Chamith Wijesooriya
+          </span>
         </Link>
       </footer>
     </div>
