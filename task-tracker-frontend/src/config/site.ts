@@ -5,10 +5,6 @@ export const siteConfig = {
   description: "Make beautiful websites regardless of your design experience.",
   navItemsForEmployee: [
     {
-      label: "Analytics",
-      href: "/analytics",
-    },
-    {
       label: "Tasks",
       href: "/tasks",
     },
@@ -17,6 +13,10 @@ export const siteConfig = {
     {
       label: "Analytics",
       href: "/analytics",
+    },
+    {
+      label: "Tasks",
+      href: "/tasks",
     },
     {
       label: "Employees",

@@ -23,21 +23,13 @@ export default function Component() {
           <div className="w-full flex justify-center items-center">
             <Image src="/assets/logo.png" width={100} />
           </div>
-          <p className="pb-0 text-center text-2xl font-semibold">
-            Task Management System
-          </p>
+          <p className="pb-0 text-center text-2xl font-semibold">Task Management System</p>
           <p className="pb-4 text-center font-thin">
             <span className="">Welcome Back!</span>
             <br />
-            <span className="text-xs">
-              Stay organized and get things done efficiently.
-            </span>
+            <span className="text-xs">Stay organized and get things done efficiently.</span>
           </p>
-          <Form
-            className="flex flex-col gap-4"
-            validationBehavior="native"
-            onSubmit={handleSubmit}
-          >
+          <Form className="flex flex-col gap-4" validationBehavior="native" onSubmit={handleSubmit}>
             <Input
               isRequired
               label="Email"
@@ -52,15 +44,9 @@ export default function Component() {
               endContent={
                 <button type="button" onClick={toggleVisibility}>
                   {isVisible ? (
-                    <Icon
-                      className="pointer-events-none text-2xl text-default-400"
-                      icon="solar:eye-closed-linear"
-                    />
+                    <Icon className="pointer-events-none text-2xl text-default-400" icon="solar:eye-closed-linear" />
                   ) : (
-                    <Icon
-                      className="pointer-events-none text-2xl text-default-400"
-                      icon="solar:eye-bold"
-                    />
+                    <Icon className="pointer-events-none text-2xl text-default-400" icon="solar:eye-bold" />
                   )}
                 </button>
               }

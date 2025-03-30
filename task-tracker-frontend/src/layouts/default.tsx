@@ -13,9 +13,7 @@ export default function DefaultLayout({
   return (
     <div className="relative flex flex-col h-screen">
       <Navbar userType={"admin"} />
-      <main className="container mx-auto max-w-7xl px-6 flex-grow pt-16">
-        {children}
-      </main>
+      <main className="container mx-auto max-w-7xl px-6 flex-grow pt-16">{children}</main>
       <footer className="w-full flex items-center justify-center py-3">
         <Link
           isExternal
@@ -24,9 +22,7 @@ export default function DefaultLayout({
           target="_blank"
           title="profile"
         >
-          <span className="text-xs font-extralight opacity-45">
-            Developed by Chamith Wijesooriya
-          </span>
+          <span className="text-xs font-extralight opacity-45">Developed by Chamith Wijesooriya</span>
         </Link>
       </footer>
     </div>

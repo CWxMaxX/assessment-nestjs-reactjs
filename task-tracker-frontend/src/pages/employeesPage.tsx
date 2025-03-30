@@ -21,12 +21,7 @@ import {
 } from "@heroui/react";
 
 import DefaultLayout from "@/layouts/default";
-import {
-  ChevronDownIcon,
-  PlusIcon,
-  TableSearchIcon,
-  VerticalDotsIcon,
-} from "@/components/icons";
+import { ChevronDownIcon, PlusIcon, TableSearchIcon, VerticalDotsIcon } from "@/components/icons";
 import { userDummyData } from "@/data/emplyeesData";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
@@ -59,23 +54,13 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
   deactivated: "danger",
 };
 
-const INITIAL_VISIBLE_COLUMNS = [
-  "id",
-  "firstName",
-  "lastName",
-  "username",
-  "department",
-  "status",
-  "actions",
-];
+const INITIAL_VISIBLE_COLUMNS = ["id", "firstName", "lastName", "username", "department", "status", "actions"];
 
 type User = (typeof users)[0];
 
 export default function EmployeesPage() {
   const [filterValue, setFilterValue] = React.useState("");
-  const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
-    new Set(INITIAL_VISIBLE_COLUMNS),
-  );
+  const [visibleColumns, setVisibleColumns] = React.useState<Selection>(new Set(INITIAL_VISIBLE_COLUMNS));
   const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
@@ -90,9 +75,7 @@ export default function EmployeesPage() {
   const headerColumns = React.useMemo(() => {
     if (visibleColumns === "all") return columns;
 
-    return columns.filter((column) =>
-      Array.from(visibleColumns).includes(column.uid),
-    );
+    return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
@@ -100,18 +83,11 @@ export default function EmployeesPage() {
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((user) =>
-        (user.firstName + " " + user.lastName)
-          .toLowerCase()
-          .includes(filterValue.toLowerCase()),
+        (user.firstName + " " + user.lastName).toLowerCase().includes(filterValue.toLowerCase())
       );
     }
-    if (
-      statusFilter !== "all" &&
-      Array.from(statusFilter).length !== statusOptions.length
-    ) {
-      filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status),
-      );
+    if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
+      filteredUsers = filteredUsers.filter((user) => Array.from(statusFilter).includes(user.status));
     }
 
     return filteredUsers;
@@ -148,13 +124,10 @@ export default function EmployeesPage() {
     }
   }, [page]);
 
-  const onRowsPerPageChange = React.useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      setRowsPerPage(Number(e.target.value));
-      setPage(1);
-    },
-    [],
-  );
+  const onRowsPerPageChange = React.useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setRowsPerPage(Number(e.target.value));
+    setPage(1);
+  }, []);
 
   const onSearchChange = React.useCallback((value?: string) => {
     if (value) {
@@ -176,12 +149,7 @@ export default function EmployeesPage() {
     switch (columnKey) {
       case "status":
         return (
-          <Chip
-            className="capitalize"
-            color={statusColorMap[user.status]}
-            size="sm"
-            variant="flat"
-          >
+          <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
             {cellValue}
           </Chip>
         );
@@ -223,10 +191,7 @@ export default function EmployeesPage() {
           <div className="flex gap-3">
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  variant="flat"
-                >
+                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
                   Status
                 </Button>
               </DropdownTrigger>
@@ -247,10 +212,7 @@ export default function EmployeesPage() {
             </Dropdown>
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  variant="flat"
-                >
+                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
                   Columns
                 </Button>
               </DropdownTrigger>
@@ -275,15 +237,10 @@ export default function EmployeesPage() {
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">
-            Total {users.length} users
-          </span>
+          <span className="text-default-400 text-small">Total {users.length} users</span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
-            <select
-              className="bg-transparent outline-none text-default-400 text-small"
-              onChange={onRowsPerPageChange}
-            >
+            <select className="bg-transparent outline-none text-default-400 text-small" onChange={onRowsPerPageChange}>
               <option value="5">5</option>
               <option value="10">10</option>
               <option value="15">15</option>
@@ -292,47 +249,21 @@ export default function EmployeesPage() {
         </div>
       </div>
     );
-  }, [
-    filterValue,
-    statusFilter,
-    visibleColumns,
-    onSearchChange,
-    onRowsPerPageChange,
-    users.length,
-    hasSearchFilter,
-  ]);
+  }, [filterValue, statusFilter, visibleColumns, onSearchChange, onRowsPerPageChange, users.length, hasSearchFilter]);
 
   const bottomContent = React.useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center">
         <div className="hidden sm:flex w-[30%] justify-start gap-2">
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="flat"
-            onPress={onPreviousPage}
-          >
+          <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onPreviousPage}>
             Previous
           </Button>
         </div>
         <div className="flex justify-center flex-row w-full">
-          <Pagination
-            isCompact
-            showControls
-            showShadow
-            color="primary"
-            page={page}
-            total={pages}
-            onChange={setPage}
-          />
+          <Pagination isCompact showControls showShadow color="primary" page={page} total={pages} onChange={setPage} />
         </div>
         <div className="hidden sm:flex w-[30%] justify-end gap-2">
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="flat"
-            onPress={onNextPage}
-          >
+          <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onNextPage}>
             Next
           </Button>
         </div>
@@ -368,11 +299,7 @@ export default function EmployeesPage() {
         </TableHeader>
         <TableBody emptyContent={"No users found"} items={sortedItems}>
           {(item) => (
-            <TableRow key={item.id}>
-              {(columnKey) => (
-                <TableCell>{renderCell(item, columnKey)}</TableCell>
-              )}
-            </TableRow>
+            <TableRow key={item.id}>{(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}</TableRow>
           )}
         </TableBody>
       </Table>

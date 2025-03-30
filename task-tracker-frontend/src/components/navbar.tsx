@@ -15,12 +15,7 @@ import React from "react";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
-import {
-  GithubIcon,
-  LinkedinIcon,
-  GlobeIcon,
-  LogoutIcon,
-} from "@/components/icons";
+import { GithubIcon, LinkedinIcon, GlobeIcon, LogoutIcon } from "@/components/icons";
 import { NavbarProps } from "@/types";
 
 export const Navbar = (props: NavbarProps) => {
@@ -31,17 +26,8 @@ export const Navbar = (props: NavbarProps) => {
   };
   const MemoizedNavbarBrand = React.memo(() => (
     <NavbarBrand className="gap-3 max-w-fit">
-      <Link
-        className="flex justify-start items-center gap-1"
-        color="foreground"
-        href="/"
-      >
-        <img
-          alt="logo"
-          className="rounded-lg mr-1"
-          src="/assets/logo.png"
-          width={35}
-        />
+      <Link className="flex justify-start items-center gap-1" color="foreground" href="/">
+        <img alt="logo" className="rounded-lg mr-1" src="/assets/logo.png" width={35} />
         <p className="font-bold text-inherit">Task Management System</p>
       </Link>
     </NavbarBrand>
@@ -65,7 +51,7 @@ export const Navbar = (props: NavbarProps) => {
                 <Link
                   className={clsx(
                     linkStyles({ color: "foreground" }),
-                    currentUrl === item.href ? "text-red-500 font-medium" : "",
+                    currentUrl === item.href ? "text-[#006FEE] font-extrabold" : ""
                   )}
                   color="foreground"
                   href={item.href}
@@ -78,10 +64,7 @@ export const Navbar = (props: NavbarProps) => {
         )}
       </NavbarContent>
 
-      <NavbarContent
-        className="hidden sm:flex basis-1/5 sm:basis-full"
-        justify="end"
-      >
+      <NavbarContent className="hidden sm:flex basis-1/5 sm:basis-full" justify="end">
         <NavbarItem className="hidden sm:flex gap-3">
           <ThemeSwitch />
           <Link isExternal href={siteConfig.links.linkedIn} title="Twitter">
@@ -111,13 +94,7 @@ export const Navbar = (props: NavbarProps) => {
           {siteConfig.navMenuItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
               <Link
-                color={
-                  index === 2
-                    ? "primary"
-                    : index === siteConfig.navMenuItems.length - 1
-                      ? "danger"
-                      : "foreground"
-                }
+                color={index === 2 ? "primary" : index === siteConfig.navMenuItems.length - 1 ? "danger" : "foreground"}
                 href="#"
                 size="lg"
               >
