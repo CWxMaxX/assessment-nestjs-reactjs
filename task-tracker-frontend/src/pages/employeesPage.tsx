@@ -62,10 +62,10 @@ export default function EmployeesPage() {
   const [filterValue, setFilterValue] = React.useState("");
   const [visibleColumns, setVisibleColumns] = React.useState<Selection>(new Set(INITIAL_VISIBLE_COLUMNS));
   const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
-    column: "age",
-    direction: "ascending",
+    column: "id",
+    direction: "descending",
   });
 
   const [page, setPage] = React.useState(1);
@@ -83,7 +83,7 @@ export default function EmployeesPage() {
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((user) =>
-        (user.firstName + " " + user.lastName).toLowerCase().includes(filterValue.toLowerCase())
+        (user.id + " " + user.firstName + " " + user.lastName).toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
@@ -182,7 +182,7 @@ export default function EmployeesPage() {
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
-            placeholder="Search by name..."
+            placeholder="Search by id and name..."
             startContent={<TableSearchIcon />}
             value={filterValue}
             onClear={() => onClear()}
@@ -241,9 +241,9 @@ export default function EmployeesPage() {
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
             <select className="bg-transparent outline-none text-default-400 text-small" onChange={onRowsPerPageChange}>
-              <option value="5">5</option>
               <option value="10">10</option>
-              <option value="15">15</option>
+              <option value="20">20</option>
+              <option value="50">50</option>
             </select>
           </label>
         </div>

@@ -13,7 +13,6 @@ import {
   DropdownMenu,
   DropdownItem,
   Chip,
-  User,
   Pagination,
   Selection,
   ChipProps,
@@ -23,6 +22,7 @@ import {
 import DefaultLayout from "@/layouts/default";
 import { ChevronDownIcon, PlusIcon, TableSearchIcon, VerticalDotsIcon } from "@/components/icons";
 import { userDummyData } from "@/data/emplyeesData";
+import tasksData from "@/data/tasksData";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -33,38 +33,50 @@ export function capitalize(s: string) {
 }
 
 export const columns = [
-  { name: "Employee ID", uid: "id", sortable: true },
-  { name: "First Name", uid: "firstName", sortable: true },
-  { name: "Last Name", uid: "lastName", sortable: true },
-  { name: "Username", uid: "username", sortable: true },
-  { name: "Department", uid: "department", sortable: true },
+  { name: "Task ID", uid: "id", sortable: true },
+  { name: "Title", uid: "title", sortable: false },
+  { name: "Description", uid: "description", sortable: false },
+  { name: "Priority", uid: "priority", sortable: true },
+  { name: "Due Date", uid: "dueDate", sortable: true },
+  { name: "Assignee", uid: "assignee", sortable: true },
   { name: "Status", uid: "status", sortable: true },
   { name: "Actions", uid: "actions" },
 ];
 
 export const statusOptions = [
-  { name: "Active", uid: "active" },
-  { name: "Deactivated", uid: "deactivated" },
+  { name: "Todo", uid: "todo" },
+  { name: "Done", uid: "done" },
 ];
 
-const users = userDummyData;
+const tasks = tasksData;
 
-const statusColorMap: Record<string, ChipProps["color"]> = {
-  active: "success",
-  deactivated: "danger",
+const priorityLevelMap: Record<string, string> = {
+  1: "High",
+  2: "Medium",
+  3: "Low",
+};
+const priorityColorMap: Record<string, ChipProps["color"]> = {
+  1: "danger",
+  2: "warning",
+  3: "success",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["id", "firstName", "lastName", "username", "department", "status", "actions"];
+const statusColorMap: Record<string, ChipProps["color"]> = {
+  done: "success",
+  todo: "primary",
+};
 
-type User = (typeof users)[0];
+const INITIAL_VISIBLE_COLUMNS = ["id", "title", "description", "priority", "dueDate", "status", "actions"];
+
+type Task = (typeof tasks)[0];
 
 export default function TasksPage() {
   const [filterValue, setFilterValue] = React.useState("");
   const [visibleColumns, setVisibleColumns] = React.useState<Selection>(new Set(INITIAL_VISIBLE_COLUMNS));
   const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
-    column: "age",
+    column: "dueDate",
     direction: "ascending",
   });
 
@@ -79,19 +91,19 @@ export default function TasksPage() {
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...users];
+    let filteredUsers = [...tasks];
 
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((user) =>
-        (user.firstName + " " + user.lastName).toLowerCase().includes(filterValue.toLowerCase())
+      filteredUsers = filteredUsers.filter((task) =>
+        (task.id + " " + task.title + " " + task.description).toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
-      filteredUsers = filteredUsers.filter((user) => Array.from(statusFilter).includes(user.status));
+      filteredUsers = filteredUsers.filter((task) => Array.from(statusFilter).includes(task.status));
     }
 
     return filteredUsers;
-  }, [users, filterValue, statusFilter]);
+  }, [tasks, filterValue, statusFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -103,9 +115,9 @@ export default function TasksPage() {
   }, [page, filteredItems, rowsPerPage]);
 
   const sortedItems = React.useMemo(() => {
-    return [...items].sort((a: User, b: User) => {
-      const first = a[sortDescriptor.column as keyof User] as number;
-      const second = b[sortDescriptor.column as keyof User] as number;
+    return [...items].sort((a: Task, b: Task) => {
+      const first = a[sortDescriptor.column as keyof Task] as number;
+      const second = b[sortDescriptor.column as keyof Task] as number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
@@ -143,13 +155,19 @@ export default function TasksPage() {
     setPage(1);
   }, []);
 
-  const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
-    const cellValue = user[columnKey as keyof User];
+  const renderCell = React.useCallback((task: Task, columnKey: React.Key) => {
+    const cellValue = task[columnKey as keyof Task];
 
     switch (columnKey) {
+      case "priority":
+        return (
+          <Chip className="capitalize" color={priorityColorMap[task.priority]} size="sm" variant="flat">
+            {priorityLevelMap[task.priority]}
+          </Chip>
+        );
       case "status":
         return (
-          <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
+          <Chip className="capitalize" color={statusColorMap[task.status]} size="sm" variant="flat">
             {cellValue}
           </Chip>
         );
@@ -182,7 +200,7 @@ export default function TasksPage() {
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
-            placeholder="Search by name..."
+            placeholder="Search by id, title, description..."
             startContent={<TableSearchIcon />}
             value={filterValue}
             onClear={() => onClear()}
@@ -237,19 +255,19 @@ export default function TasksPage() {
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">Total {users.length} users</span>
+          <span className="text-default-400 text-small">Total {tasks.length} tasks</span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
             <select className="bg-transparent outline-none text-default-400 text-small" onChange={onRowsPerPageChange}>
-              <option value="5">5</option>
               <option value="10">10</option>
-              <option value="15">15</option>
+              <option value="20">20</option>
+              <option value="50">50</option>
             </select>
           </label>
         </div>
       </div>
     );
-  }, [filterValue, statusFilter, visibleColumns, onSearchChange, onRowsPerPageChange, users.length, hasSearchFilter]);
+  }, [filterValue, statusFilter, visibleColumns, onSearchChange, onRowsPerPageChange, tasks.length, hasSearchFilter]);
 
   const bottomContent = React.useMemo(() => {
     return (
@@ -297,7 +315,7 @@ export default function TasksPage() {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody emptyContent={"No users found"} items={sortedItems}>
+        <TableBody emptyContent={"No tasks found"} items={sortedItems}>
           {(item) => (
             <TableRow key={item.id}>{(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}</TableRow>
           )}
