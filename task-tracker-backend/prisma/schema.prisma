@@ -20,9 +20,22 @@ model User {
   lastName   String
   department Department
   password   String
-  status     Status
+  status     UserStatus
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt()
+}
+
+model Task {
+  id          Int        @id @default(autoincrement())
+  title       String
+  description String
+  priority    TaskPriority
+  dueDate     DateTime
+  assignee    String
+  assigneeId  Int
+  status      TaskStatus
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt()
 }
 
 enum Department {
@@ -32,7 +45,18 @@ enum Department {
   Finance
 }
 
-enum Status {
+enum UserStatus {
   Active
   Deactivated
+}
+
+enum TaskStatus {
+  todo
+  done
+}
+
+enum TaskPriority {
+  l1
+  l2
+  l3
 }

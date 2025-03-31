@@ -51,14 +51,14 @@ export const statusOptions = [
 const tasks = tasksData;
 
 const priorityLevelMap: Record<string, string> = {
-  1: "High",
-  2: "Medium",
-  3: "Low",
+  l1: "High",
+  l2: "Medium",
+  l3: "Low",
 };
 const priorityColorMap: Record<string, ChipProps["color"]> = {
-  1: "danger",
-  2: "warning",
-  3: "success",
+  l1: "danger",
+  l2: "warning",
+  l3: "success",
 };
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
