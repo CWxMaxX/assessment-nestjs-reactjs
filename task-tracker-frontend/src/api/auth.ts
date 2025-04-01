@@ -1,5 +1,5 @@
 import axios from "axios";
-export const BASE_API_URL = process.env.REACT_APP_BASE_API_URL || "http://localhost:3000";
+export const BASE_API_URL = process.env.REACT_APP_BASE_API_URL || "https://assessment-nestjs-reactjs-production.up.railway.app";
 
 export interface UserResponse {
   id: number;
