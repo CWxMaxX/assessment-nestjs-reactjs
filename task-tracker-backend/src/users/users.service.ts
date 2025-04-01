@@ -50,4 +50,10 @@ export class UsersService {
       where: { id },
     });
   }
+  async updateStatus(id: number, status: "Active" | "Deactivated") {
+    return this.databaseService.user.update({
+      where: { id },
+      data: { status },
+    });
+  }
 }

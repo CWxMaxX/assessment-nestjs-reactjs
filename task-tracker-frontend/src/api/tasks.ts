@@ -47,6 +47,16 @@ export const fetchAllTasks = async (): Promise<TaskResponse[]> => {
   return response.data;
 };
 
+export const fetchAllTasksWithAssignee = async (userId : number): Promise<TaskResponse[]> => {
+  const response = await axios.get<TaskResponse[]>(`${BASE_API_URL}/tasks/with-assignee/${userId}`, {
+    headers: {
+      Authorization: getAccessToken(),
+    },
+  });
+
+  return response.data;
+};
+
 export const updateTaskStatus = async (taskId: number, status: string): Promise<TaskResponse> => {
   console.log("Task Id : ", taskId);
   const response = await axios.post<TaskResponse>(

@@ -26,8 +26,9 @@ import DefaultLayout from "@/layouts/default";
 import { ChevronDownIcon, EyeIcon, PlusIcon, TableSearchIcon } from "@/components/icons";
 import CommonModal from "@/components/commonModal";
 import CreateTaskForm from "@/components/createTaskForm";
-import { fetchAllTasks, TaskResponse, updateTaskStatus } from "@/api/tasks";
+import { fetchAllTasks, fetchAllTasksWithAssignee, TaskResponse, updateTaskStatus } from "@/api/tasks";
 import TaskView from "@/components/taskView";
+import { getUserData } from "@/utils/store";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -83,7 +84,8 @@ export default function TasksPage() {
   });
 
   const [page, setPage] = React.useState(1);
-
+  const userType = getUserData("userType");
+  const userId = getUserData("id");
   const hasSearchFilter = Boolean(filterValue);
 
   const headerColumns = React.useMemo(() => {
@@ -231,7 +233,7 @@ export default function TasksPage() {
 
   const fetchTasks = React.useCallback(async () => {
     try {
-      const fetchedTasks = await fetchAllTasks();
+      const fetchedTasks = userType === "admin" ? await fetchAllTasks() : await fetchAllTasksWithAssignee(userId);
 
       fetchedTasks.sort((a, b) => {
         if (a.status === "done" && b.status !== "done") return 1;
@@ -306,15 +308,17 @@ export default function TasksPage() {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <CommonModal
-              body={<CreateTaskForm onTaskCreated={fetchTasks} />}
-              button={
-                <Button className="-z-10" color="primary" endContent={<PlusIcon />}>
-                  Add New
-                </Button>
-              }
-              title="Create New Task"
-            />
+            {userType === "admin" && (
+              <CommonModal
+                body={<CreateTaskForm onTaskCreated={fetchTasks} />}
+                button={
+                  <Button className="-z-10" color="primary" endContent={<PlusIcon />}>
+                    Add New
+                  </Button>
+                }
+                title="Create New Task"
+              />
+            )}
           </div>
         </div>
         <div className="flex justify-between items-center">

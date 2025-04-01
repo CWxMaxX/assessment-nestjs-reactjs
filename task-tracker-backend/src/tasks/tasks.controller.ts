@@ -22,6 +22,11 @@ export class TasksController {
     return this.tasksService.findAll();
   }
 
+  @Get("with-assignee/:id")
+  async findAllWithAssignee(@Param("id") id: string) {
+    return this.tasksService.findAllWithAssignee(+id);
+  }
+
   @Get(":id")
   async findOne(@Param("id") id: string) {
     return this.tasksService.findOne(+id);

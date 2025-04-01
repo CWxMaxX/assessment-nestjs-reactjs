@@ -11,6 +11,11 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  @Post("update-status")
+  async updateStatus(@Body() updateStatusDto: { id: number; status: "Active" | "Deactivated" }) {
+    return this.usersService.updateStatus(updateStatusDto.id, updateStatusDto.status);
+  }
+
   @Get()
   async findAll() {
     return this.usersService.findAll();

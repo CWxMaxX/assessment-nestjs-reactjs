@@ -93,10 +93,28 @@ export const Navbar = (props: NavbarProps) => {
 
       <NavbarMenu>
         <div className="mx-4 mt-2 flex flex-col gap-2">
-          {siteConfig.navMenuItems.map((item, index) => (
+          {(props.userType === "admin"
+            ? siteConfig.navItemsForAdmin
+            : props.userType === "employee"
+              ? siteConfig.navItemsForEmployee
+              : siteConfig.navItemsEmpty
+          ).map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
               <Link
-                color={index === 2 ? "primary" : index === siteConfig.navMenuItems.length - 1 ? "danger" : "foreground"}
+                color={
+                  index === 2
+                    ? "primary"
+                    : index ===
+                        (props.userType === "admin"
+                          ? siteConfig.navItemsForAdmin
+                          : props.userType === "employee"
+                            ? siteConfig.navItemsForEmployee
+                            : siteConfig.navItemsEmpty
+                        ).length -
+                          1
+                      ? "danger"
+                      : "foreground"
+                }
                 href="#"
                 size="lg"
               >
@@ -104,6 +122,11 @@ export const Navbar = (props: NavbarProps) => {
               </Link>
             </NavbarMenuItem>
           ))}
+          {props.userType && (
+            <Button isIconOnly variant="light" onPress={handleLogout} endContent={<LogoutIcon />}>
+              Logout
+            </Button>
+          )}
         </div>
       </NavbarMenu>
     </HeroUINavbar>

@@ -1,4 +1,4 @@
-import React, { SVGProps } from "react";
+import React, { SVGProps, useEffect } from "react";
 import {
   Table,
   TableHeader,
@@ -21,8 +21,12 @@ import {
 } from "@heroui/react";
 
 import DefaultLayout from "@/layouts/default";
-import { ChevronDownIcon, PlusIcon, TableSearchIcon, VerticalDotsIcon } from "@/components/icons";
+import { ChevronDownIcon, PlusIcon, TableSearchIcon, TrashCanIcon, VerticalDotsIcon } from "@/components/icons";
 import { userDummyData } from "@/data/emplyeesData";
+import CommonModal from "@/components/commonModal";
+import CreateUserForm from "@/components/createUserForm";
+import { deleteUser, fetchAllUsers, updateUserStatus } from "@/api/users";
+import { UserResponse } from "@/api/auth";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -50,8 +54,8 @@ export const statusOptions = [
 const users = userDummyData;
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
-  active: "success",
-  deactivated: "danger",
+  Active: "success",
+  Deactivated: "danger",
 };
 
 const INITIAL_VISIBLE_COLUMNS = ["id", "firstName", "lastName", "username", "department", "status", "actions"];
@@ -63,6 +67,7 @@ export default function EmployeesPage() {
   const [visibleColumns, setVisibleColumns] = React.useState<Selection>(new Set(INITIAL_VISIBLE_COLUMNS));
   const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [users, setUsers] = React.useState<UserResponse[]>([]);
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
     column: "id",
     direction: "descending",
@@ -143,6 +148,38 @@ export default function EmployeesPage() {
     setPage(1);
   }, []);
 
+  const handleUpdateUserStatus = async (id: number, status: "Active" | "Deactivated") => {
+    try {
+      await updateUserStatus(id, status);
+      fetchUsers();
+    } catch (error) {
+      console.error("Failed to update user status:", error);
+    }
+  };
+  const handleDeleteUser = async (id: number) => {
+    try {
+      await deleteUser(id);
+      fetchUsers();
+    } catch (error) {
+      console.error("Failed to delete user:", error);
+    }
+  };
+
+  const fetchUsers = React.useCallback(async () => {
+    try {
+      const fetchedUsers = await fetchAllUsers();
+
+      setUsers(fetchedUsers);
+      setPage(1);
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+
   const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
     const cellValue = user[columnKey as keyof User];
 
@@ -155,19 +192,33 @@ export default function EmployeesPage() {
         );
       case "actions":
         return (
-          <div className="relative flex justify-end items-center gap-2">
-            <Dropdown>
-              <DropdownTrigger>
-                <Button isIconOnly size="sm" variant="light">
-                  <VerticalDotsIcon className="text-default-300" />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem key="view">View</DropdownItem>
-                <DropdownItem key="edit">Edit</DropdownItem>
-                <DropdownItem key="delete">Delete</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
+          <div className="relative flex justify-center items-center gap-2">
+            {user.status === "Deactivated" ? (
+              <Button
+                className="w-[100px]"
+                color="success"
+                size="sm"
+                onPress={() => handleUpdateUserStatus(user.id, "Active")}
+              >
+                Activate
+              </Button>
+            ) : (
+              <Button
+                className="w-[100px]"
+                color="warning"
+                size="sm"
+                onPress={() => handleUpdateUserStatus(user.id, "Deactivated")}
+              >
+                Deactivate
+              </Button>
+            )}
+            <TrashCanIcon
+              className="cursor-pointer hover:opacity-55 ml-2"
+              color="#ef1460"
+              onClick={() => {
+                handleDeleteUser(user.id);
+              }}
+            />
           </div>
         );
       default:
@@ -231,9 +282,15 @@ export default function EmployeesPage() {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button color="primary" endContent={<PlusIcon />}>
-              Add New
-            </Button>
+            <CommonModal
+              body={<CreateUserForm onUserCreated={fetchUsers} />}
+              button={
+                <Button className="-z-10" color="primary" endContent={<PlusIcon />}>
+                  Add New
+                </Button>
+              }
+              title="Create New Employee"
+            />
           </div>
         </div>
         <div className="flex justify-between items-center">
