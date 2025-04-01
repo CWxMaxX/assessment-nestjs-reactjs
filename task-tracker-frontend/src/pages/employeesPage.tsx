@@ -21,7 +21,7 @@ import {
 } from "@heroui/react";
 
 import DefaultLayout from "@/layouts/default";
-import { ChevronDownIcon, PlusIcon, TableSearchIcon, TrashCanIcon, VerticalDotsIcon } from "@/components/icons";
+import { ChevronDownIcon, PlusIcon, TableSearchIcon, TrashCanIcon } from "@/components/icons";
 import { userDummyData } from "@/data/emplyeesData";
 import CommonModal from "@/components/commonModal";
 import CreateUserForm from "@/components/createUserForm";

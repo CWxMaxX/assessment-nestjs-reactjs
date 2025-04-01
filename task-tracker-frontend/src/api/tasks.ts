@@ -47,7 +47,7 @@ export const fetchAllTasks = async (): Promise<TaskResponse[]> => {
   return response.data;
 };
 
-export const fetchAllTasksWithAssignee = async (userId : number): Promise<TaskResponse[]> => {
+export const fetchAllTasksWithAssignee = async (userId: number): Promise<TaskResponse[]> => {
   const response = await axios.get<TaskResponse[]>(`${BASE_API_URL}/tasks/with-assignee/${userId}`, {
     headers: {
       Authorization: getAccessToken(),

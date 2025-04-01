@@ -123,7 +123,7 @@ export const Navbar = (props: NavbarProps) => {
             </NavbarMenuItem>
           ))}
           {props.userType && (
-            <Button isIconOnly variant="light" onPress={handleLogout} endContent={<LogoutIcon />}>
+            <Button isIconOnly endContent={<LogoutIcon />} variant="light" onPress={handleLogout}>
               Logout
             </Button>
           )}

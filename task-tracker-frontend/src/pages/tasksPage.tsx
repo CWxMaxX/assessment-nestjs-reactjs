@@ -197,7 +197,6 @@ export default function TasksPage() {
               className="z-10"
               role="button"
               onClick={() => {
-                console.log("Checked clicked");
                 handleUpdateTaskStatus(task.id, task.status as "todo" | "done");
               }}
             >
