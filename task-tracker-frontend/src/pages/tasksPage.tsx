@@ -1,4 +1,6 @@
-import React, { SVGProps } from "react";
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/interactive-supports-focus */
+import React, { SVGProps, useEffect } from "react";
 import {
   Table,
   TableHeader,
@@ -17,12 +19,15 @@ import {
   Selection,
   ChipProps,
   SortDescriptor,
+  Checkbox,
 } from "@heroui/react";
 
 import DefaultLayout from "@/layouts/default";
-import { ChevronDownIcon, PlusIcon, TableSearchIcon, VerticalDotsIcon } from "@/components/icons";
-import { userDummyData } from "@/data/emplyeesData";
-import tasksData from "@/data/tasksData";
+import { ChevronDownIcon, EyeIcon, PlusIcon, TableSearchIcon } from "@/components/icons";
+import CommonModal from "@/components/commonModal";
+import CreateTaskForm from "@/components/createTaskForm";
+import { fetchAllTasks, TaskResponse, updateTaskStatus } from "@/api/tasks";
+import TaskView from "@/components/taskView";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -48,36 +53,33 @@ export const statusOptions = [
   { name: "Done", uid: "done" },
 ];
 
-const tasks = tasksData;
-
-const priorityLevelMap: Record<string, string> = {
+export const priorityLevelMap: Record<string, string> = {
   l1: "High",
   l2: "Medium",
   l3: "Low",
 };
-const priorityColorMap: Record<string, ChipProps["color"]> = {
+export const priorityColorMap: Record<string, ChipProps["color"]> = {
   l1: "danger",
   l2: "warning",
   l3: "success",
 };
 
-const statusColorMap: Record<string, ChipProps["color"]> = {
+export const statusColorMap: Record<string, ChipProps["color"]> = {
   done: "success",
   todo: "primary",
 };
 
 const INITIAL_VISIBLE_COLUMNS = ["id", "title", "description", "priority", "dueDate", "status", "actions"];
 
-type Task = (typeof tasks)[0];
-
 export default function TasksPage() {
+  const [tasks, setTasks] = React.useState<TaskResponse[]>([]);
   const [filterValue, setFilterValue] = React.useState("");
   const [visibleColumns, setVisibleColumns] = React.useState<Selection>(new Set(INITIAL_VISIBLE_COLUMNS));
   const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
-    column: "dueDate",
-    direction: "ascending",
+    column: "status",
+    direction: "descending",
   });
 
   const [page, setPage] = React.useState(1);
@@ -115,9 +117,9 @@ export default function TasksPage() {
   }, [page, filteredItems, rowsPerPage]);
 
   const sortedItems = React.useMemo(() => {
-    return [...items].sort((a: Task, b: Task) => {
-      const first = a[sortDescriptor.column as keyof Task] as number;
-      const second = b[sortDescriptor.column as keyof Task] as number;
+    return [...items].sort((a: TaskResponse, b: TaskResponse) => {
+      const first = a[sortDescriptor.column as keyof TaskResponse] as number;
+      const second = b[sortDescriptor.column as keyof TaskResponse] as number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
@@ -155,10 +157,25 @@ export default function TasksPage() {
     setPage(1);
   }, []);
 
-  const renderCell = React.useCallback((task: Task, columnKey: React.Key) => {
-    const cellValue = task[columnKey as keyof Task];
+  const handleUpdateTaskStatus = async (taskId: number, status: "todo" | "done") => {
+    try {
+      const toggledStatus = status === "todo" ? "done" : "todo";
+
+      await updateTaskStatus(taskId, toggledStatus);
+      fetchTasks();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const renderCell = React.useCallback((task: TaskResponse, columnKey: React.Key) => {
+    const cellValue = task[columnKey as keyof TaskResponse];
 
     switch (columnKey) {
+      case "description":
+        return <div className="opacity-55">{task.description}</div>;
+      case "dueDate":
+        return <div>{task.dueDate.split("T")[0]}</div>;
       case "priority":
         return (
           <Chip className="capitalize" color={priorityColorMap[task.priority]} size="sm" variant="flat">
@@ -173,25 +190,65 @@ export default function TasksPage() {
         );
       case "actions":
         return (
-          <div className="relative flex justify-end items-center gap-2">
-            <Dropdown>
-              <DropdownTrigger>
-                <Button isIconOnly size="sm" variant="light">
-                  <VerticalDotsIcon className="text-default-300" />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem key="view">View</DropdownItem>
-                <DropdownItem key="edit">Edit</DropdownItem>
-                <DropdownItem key="delete">Delete</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
+          <div className="relative flex justify-end items-center gap-4">
+            <div
+              className="z-10"
+              role="button"
+              onClick={() => {
+                console.log("Checked clicked");
+                handleUpdateTaskStatus(task.id, task.status as "todo" | "done");
+              }}
+            >
+              <Checkbox
+                className="hover:opacity-55 -z-10"
+                isSelected={task.status === "todo" ? false : true}
+                name="remember"
+                size="sm"
+                onClick={() => {
+                  handleUpdateTaskStatus(task.id, task.status as "todo" | "done");
+                }}
+              />
+            </div>
+            <CommonModal
+              actionFunction={() => {
+                handleUpdateTaskStatus(task.id, task.status as "todo" | "done");
+              }}
+              actionTitle={task.status === "todo" ? "Mark as done" : "Mark as todo"}
+              body={<TaskView taskDetails={task} />}
+              button={
+                <div className="p-2">
+                  <EyeIcon className="hover:opacity-55 " size={20} />
+                </div>
+              }
+              title={task.id + " - " + task.title}
+            />
           </div>
         );
       default:
         return cellValue;
     }
   }, []);
+
+  const fetchTasks = React.useCallback(async () => {
+    try {
+      const fetchedTasks = await fetchAllTasks();
+
+      fetchedTasks.sort((a, b) => {
+        if (a.status === "done" && b.status !== "done") return 1;
+        if (a.status !== "done" && b.status === "done") return -1;
+
+        return 0;
+      });
+      setTasks(fetchedTasks);
+      setPage(1);
+    } catch (error) {
+      console.error("Failed to fetch tasks:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchTasks();
+  }, [fetchTasks]);
 
   const topContent = React.useMemo(() => {
     return (
@@ -249,9 +306,15 @@ export default function TasksPage() {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button color="primary" endContent={<PlusIcon />}>
-              Add New
-            </Button>
+            <CommonModal
+              body={<CreateTaskForm onTaskCreated={fetchTasks} />}
+              button={
+                <Button className="-z-10" color="primary" endContent={<PlusIcon />}>
+                  Add New
+                </Button>
+              }
+              title="Create New Task"
+            />
           </div>
         </div>
         <div className="flex justify-between items-center">

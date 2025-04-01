@@ -21,24 +21,31 @@ export class UsersService {
     });
   }
 
-  findAll() {
+  async findAll() {
     return this.databaseService.user.findMany();
   }
 
-  findOne(id: number) {
+  async findActiveUsers() {
+    return await this.databaseService.user.findMany({
+      where:{ status : "Active"}
+    })
+    
+  }
+
+  async findOne(id: number) {
     return this.databaseService.user.findUnique({
       where: { id },
     });
   }
 
-  update(id: number, updateUserDto: Prisma.UserUpdateInput) {
+  async update(id: number, updateUserDto: Prisma.UserUpdateInput) {
     return this.databaseService.user.update({
       where: { id },
       data: updateUserDto,
     });
   }
 
-  remove(id: number) {
+  async remove(id: number) {
     return this.databaseService.user.delete({
       where: { id },
     });

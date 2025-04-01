@@ -17,10 +17,12 @@ import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { GithubIcon, LinkedinIcon, GlobeIcon, LogoutIcon } from "@/components/icons";
 import { NavbarProps } from "@/types";
+import { logout } from "@/api/auth";
 
 export const Navbar = (props: NavbarProps) => {
   const currentUrl = window.location.pathname;
   const handleLogout = () => {
+    logout();
     window.location.href = "/login";
     window.history.replaceState(null, "", "/login");
   };

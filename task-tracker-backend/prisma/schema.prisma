@@ -23,10 +23,11 @@ model User {
   status     UserStatus
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt()
+  userType   UserType
 }
 
 model Task {
-  id          Int        @id @default(autoincrement())
+  id          Int          @id @default(autoincrement())
   title       String
   description String
   priority    TaskPriority
@@ -34,8 +35,8 @@ model Task {
   assignee    String
   assigneeId  Int
   status      TaskStatus
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt()
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt()
 }
 
 enum Department {
@@ -59,4 +60,9 @@ enum TaskPriority {
   l1
   l2
   l3
+}
+
+enum UserType {
+  admin
+  employee
 }

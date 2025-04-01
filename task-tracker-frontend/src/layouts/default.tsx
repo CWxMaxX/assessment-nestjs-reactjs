@@ -1,18 +1,24 @@
 import { Link } from "@heroui/link";
+import { useEffect } from "react";
 
 import { Navbar } from "@/components/navbar";
-import { NavbarProps } from "@/types";
+import { getUserData } from "@/utils/store";
+import { logout } from "@/api/auth";
 
-export default function DefaultLayout({
-  children,
-  navBarProps,
-}: {
-  children: React.ReactNode;
-  navBarProps?: NavbarProps | null;
-}) {
+export default function DefaultLayout({ children }: { children: React.ReactNode }) {
+  const userType = getUserData("userType");
+
+  useEffect(() => {
+    if (!userType && window.location.pathname !== "/login") {
+      logout();
+      window.location.href = "/login";
+      window.history.replaceState(null, "", "/login");
+    }
+  }, []);
+
   return (
     <div className="relative flex flex-col h-screen">
-      <Navbar userType={"admin"} />
+      <Navbar userType={userType} />
       <main className="container mx-auto max-w-7xl px-6 flex-grow pt-16">{children}</main>
       <footer className="w-full flex items-center justify-center py-3">
         <Link

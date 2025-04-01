@@ -1,19 +1,36 @@
-"use client";
-
 import React from "react";
 import { Button, Input, Checkbox, Form, Image } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
 import DefaultLayout from "@/layouts/default";
+import { login } from "@/api/auth";
 
 export default function Component() {
   const [isVisible, setIsVisible] = React.useState(false);
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("handleSubmit");
+    const formData = new FormData(event.currentTarget);
+    const username = formData.get("username") as string;
+    const password = formData.get("password") as string;
+
+    try {
+      const response = await login(username, password);
+
+      if (response) {
+        localStorage.setItem("access_token", response.access_token);
+        localStorage.setItem("user", JSON.stringify(response.user));
+        if (response.user?.userType === "admin") {
+          window.location.href = "/analytics";
+        } else if (response.user?.userType === "employee") {
+          window.location.href = "/tasks";
+        }
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
   };
 
   return (
@@ -32,11 +49,11 @@ export default function Component() {
           <Form className="flex flex-col gap-4" validationBehavior="native" onSubmit={handleSubmit}>
             <Input
               isRequired
-              label="Email"
+              label="Username"
               labelPlacement="outside"
-              name="email"
-              placeholder="Enter your email"
-              type="email"
+              name="username"
+              placeholder="Enter your username"
+              type="username"
               variant="bordered"
             />
             <Input

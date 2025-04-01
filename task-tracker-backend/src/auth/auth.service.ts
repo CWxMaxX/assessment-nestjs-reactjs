@@ -29,12 +29,12 @@ export class AuthService {
     const payload = { username: user.username, sub: user.id };
     const userData = await this.findUserByUsername(user.username);
     if (!userData) {
-        throw new UnauthorizedException('User not found');
+      throw new UnauthorizedException("User not found");
     }
     const { password, ...userDataWithoutPassword } = userData;
     return {
       access_token: this.jwtService.sign(payload),
-      user: userDataWithoutPassword
+      user: userDataWithoutPassword,
     };
   }
 }

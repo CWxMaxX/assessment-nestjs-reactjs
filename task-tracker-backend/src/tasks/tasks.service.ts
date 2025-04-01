@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { DatabaseService } from 'src/database/database.service';
+import { Injectable } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
+import { DatabaseService } from "src/database/database.service";
 
 @Injectable()
 export class TasksService {
   constructor(private readonly databaseService: DatabaseService) {}
   create(createTaskDto: Prisma.TaskCreateInput) {
     return this.databaseService.task.create({
-      data: createTaskDto
-    })
+      data: createTaskDto,
+    });
   }
 
   findAll() {
@@ -31,6 +31,12 @@ export class TasksService {
   remove(id: number) {
     return this.databaseService.user.delete({
       where: { id },
+    });
+  }
+  updateStatus(id: number, status: "done" | "todo") {
+    return this.databaseService.task.update({
+      where: { id },
+      data: { status },
     });
   }
 }
